@@ -1,47 +1,68 @@
-﻿@model IEnumerable<WebApplication3.Models.Task>
+﻿
+@{
+	ViewData["Title"] = "Tasks";
+}
 
-<h2>Мои задания</h2>
-<a href="/Tasks/Create">Добавить новую задачу</a>
+ @model IEnumerable<WebApplication3.Models.Task>
 
-<table>
-    <thead>
-        <tr>
-            <th>Название</th>
-            <th>Описание</th>
-            <th>Срок</th>
-            <th>Награда</th>
-            <th>Статус</th>
-            <th>Действия</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var task in Model)
-        {
-            <tr>
-                <td>@task.Title</td>
-                <td>@task.Description</td>
-                <td>@task.Deadline</td>
-                <td>@task.Reward баллов</td>
-                <td>@task.Status</td>
-                <td>
-                    <a href="/Tasks/Edit/@task.Id">
-                        <button>Редактировать</button>
-                    </a>
-                    <a href="/Tasks/ChangeStatus/@task.Id">
-                        @if (task.Status == "Не выполнено")
-                        {
-                            <button>Отметить как выполнено</button>
-                        }
-                        else
-                        {
-                            <button>Отметить как не выполнено</button>
-                        }
-                    </a>
-                    <a href="/Tasks/Delete/@task.Id">
-                        <button>Удалить</button>
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
+<h1>@ViewData["Title"]</h1>
+
+@if (ViewBag.UserRole != "Child")
+{
+	<p>
+		<a asp-action="Create">Create New</a>
+	</p>
+}
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Description)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Points)
+				+
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.IsCompleted)
+			</th>
+			<th>
+				Child Name
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Description)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Points)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.IsCompleted)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Child.Name)
+				</td>
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+					<a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+					@if (item.IsCompleted)
+					{
+						<a asp-action="MarkComplete" asp-route-id="@item.Id">Mark Incomplete</a>
+					}
+					else
+					{
+						<a asp-action="MarkComplete" asp-route-id="@item.Id">Mark Complete</a>
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
+

@@ -6,36 +6,20 @@
     <input type="hidden" asp-for="Id" />
 
     <div>
-        <label for="Title">Название</label>
-        <input type="text" id="Title" asp-for="Title" required>
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
-
-    <div>
         <label for="Description">Описание</label>
         <textarea id="Description" asp-for="Description" required></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
     <div>
-        <label for="Deadline">Срок выполнения</label>
-        <input type="date" id="Deadline" asp-for="Deadline" required>
-        <span asp-validation-for="Deadline" class="text-danger"></span>
+        <label for="Points">Награда (баллы)</label>
+        <input type="number" id="Points" asp-for="Points" min="1" required>
+        <span asp-validation-for="Points" class="text-danger"></span>
     </div>
 
     <div>
-        <label for="Reward">Награда (баллы)</label>
-        <input type="number" id="Reward" asp-for="Reward" min="1" required>
-        <span asp-validation-for="Reward" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label for="Status">Статус</label>
-        <select id="Status" asp-for="Status">
-            <option value="Не выполнено">Не выполнено</option>
-            <option value="Выполнено">Выполнено</option>
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
+        <input type="checkbox" id="IsCompleted" asp-for="IsCompleted" />
+        @Html.LabelFor(m => m.IsCompleted, new { @class = "control-label" })
     </div>
 
     <button type="submit">Сохранить изменения</button>

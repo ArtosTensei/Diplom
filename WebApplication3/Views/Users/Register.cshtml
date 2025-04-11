@@ -1,0 +1,92 @@
+﻿cshtml
+@model WebApplication3.Models.User
+
+<h2>Register</h2>
+
+@using (Html.BeginForm("Register", "Users", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>User</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsParent, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.IsParent)
+                    @Html.ValidationMessageFor(model => model.IsParent, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div id="children-section" style="display:none;">
+            <h4>Children</h4>
+            <div id="children-container">
+                <!-- Child fields will be added here -->
+            </div>
+            <button type="button" id="add-child" class="btn btn-default">Add Child</button>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Register" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#IsParent').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#children-section').show();
+                } else {
+                    $('#children-section').hide();
+                }
+            });
+
+            $('#add-child').click(function () {
+                var childIndex = $('#children-container').children().length;
+                var childFields = `
+                    <div class="child-fields">
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="Children[${childIndex}].Email">Child Email</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="Children[${childIndex}].Email" id="Children[${childIndex}].Email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="Children[${childIndex}].Password">Child Password</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="password" name="Children[${childIndex}].Password" id="Children[${childIndex}].Password">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#children-container').append(childFields);
+            });
+        });
+    </script>
+}
