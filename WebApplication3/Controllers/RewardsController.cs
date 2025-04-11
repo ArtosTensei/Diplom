@@ -18,7 +18,7 @@ namespace WebApplication3.Controllers
 
         public async Task<IActionResult> ManageRewards()
         {
-            // Загружаем награды вместе с информацией о детях через ChildRewards
+            //  ChildRewards
             var rewards = await _context.Rewards
                 .Include(r => r.ChildRewards)
                 .ThenInclude(cr => cr.Child)
@@ -36,19 +36,39 @@ namespace WebApplication3.Controllers
 
         // POST: Rewards/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddReward([Bind("Id,Name,Points")] Reward reward)
+        public async Task<IActionResult> AddReward([Bind("Id,Name,Points,ChildId")] Reward reward)
         {
+            if (_context == null)
+            {
+                Console.WriteLine("_context is null in AddReward POST");
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(reward);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception during SaveChanges: {ex.Message}");
+                    // Optionally, log the full exception details for debugging
+                }
                 return RedirectToAction(nameof(ManageRewards));
             }
 
             // Repopulate ViewBag.Children if there are validation errors!
             ViewBag.Children = await _context.Children.ToListAsync();
             return View(reward);
+        }
+        private void PrintModelStateErrors()
+        {
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                if (state.Errors.Any())
+                    Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", state.Errors.Select(e => e.ErrorMessage))}");
+            }
         }
     }
 }
