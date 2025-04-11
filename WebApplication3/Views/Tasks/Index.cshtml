@@ -1,0 +1,47 @@
+﻿@model IEnumerable<WebApplication3.Models.Task>
+
+<h2>Мои задания</h2>
+<a href="/Tasks/Create">Добавить новую задачу</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Срок</th>
+            <th>Награда</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var task in Model)
+        {
+            <tr>
+                <td>@task.Title</td>
+                <td>@task.Description</td>
+                <td>@task.Deadline</td>
+                <td>@task.Reward баллов</td>
+                <td>@task.Status</td>
+                <td>
+                    <a href="/Tasks/Edit/@task.Id">
+                        <button>Редактировать</button>
+                    </a>
+                    <a href="/Tasks/ChangeStatus/@task.Id">
+                        @if (task.Status == "Не выполнено")
+                        {
+                            <button>Отметить как выполнено</button>
+                        }
+                        else
+                        {
+                            <button>Отметить как не выполнено</button>
+                        }
+                    </a>
+                    <a href="/Tasks/Delete/@task.Id">
+                        <button>Удалить</button>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
