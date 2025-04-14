@@ -1,5 +1,5 @@
-﻿
-@model IEnumerable<WebApplication3.Models.Reward>
+﻿@model IEnumerable<WebApplication3.Models.Reward>
+@inject WebApplication3.Data.ApplicationDbContext _context
 
 @{
     ViewData["Title"] = "Управление наградами";
@@ -16,7 +16,7 @@
         <tr>
             <th>Название</th>
             <th>Баллы</th>
-            <th>Дети</th>  <!-- Новый столбец -->
+            <th>Ребенок</th>
         </tr>
     </thead>
     <tbody>
@@ -26,15 +26,12 @@
                 <td>@reward.Name</td>
                 <td>@reward.Points</td>
                 <td>
-                    @if (reward.ChildRewards != null && reward.ChildRewards.Any())
-                    {
-                        @string.Join(", ", reward.ChildRewards.Select(cr => cr.Child.Name))
-                    }
-                    else
-                    {
-                        <text>Нет связанных детей</text>
+                    @{
+                        var child = _context.Children.FirstOrDefault(c => c.Id == reward.ChildId);
+                        @child?.Name
                     }
                 </td>
+                <td><a href="@Url.Action("EditReward", new { id = reward.Id })">Редактировать</a></td>
             </tr>
         }
     </tbody>

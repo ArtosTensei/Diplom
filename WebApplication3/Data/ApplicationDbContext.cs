@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApplication3.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace WebApplication3.Data
 {
@@ -16,7 +15,7 @@ namespace WebApplication3.Data
 
         public DbSet<Parent> Parents { get; set; }
         public DbSet<Child> Children { get; set; }
-        public DbSet<WebApplication3.Models.Task> Tasks { get; set; }
+        public DbSet<Models.Task> Tasks { get; set; }
         public DbSet<Reward> Rewards { get; set; }
         public DbSet<ChildReward> ChildRewards { get; set; }
 

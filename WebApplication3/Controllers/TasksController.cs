@@ -30,7 +30,7 @@ namespace WebApplication3.Controllers
             if (childId.HasValue)
             {
                 // If childId is provided, get tasks for that specific child
-                var tasks = _context.Tasks.Where(t => t.ChildId == childId.Value).ToList();
+                var tasks = _context.Tasks.Include(t => t.Child).Where(t => t.ChildId == childId.Value).ToList();
                 return View(tasks);
             }
             else if (role == "Parent")
@@ -68,44 +68,40 @@ namespace WebApplication3.Controllers
             }
 
             // Get children of the current parent to populate a dropdown
-            var children = _context.Children.Where(c => c.ParentId == userId).ToList();
+            var children = _context.Children.Where(c => c.ParentId == userId).Select(c => new { c.Id, c.Name }).ToList();
             ViewBag.Children = children;
 
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(WebApplication3.Models.Task task)
+        public IActionResult Create(string description, int points, int childId)
         {
             var role = _httpContextAccessor.HttpContext.Session.GetString("Role");
             var userId = _httpContextAccessor.HttpContext.Session.GetInt32("UserId");
-
             if (role != "Parent")
             {
                 return RedirectToAction("Index"); // Or show an error message
             }
-
-            if (ModelState.IsValid)
+            if (string.IsNullOrEmpty(description) || points <= 0)
             {
-                // Ensure the task is for a child of the current parent
-                var child = _context.Children.Find(task.ChildId);
-                if (child != null && child.ParentId == userId)
-                {
-                    _context.Tasks.Add(task);
-                    _context.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ViewBag.ErrorMessage = "Invalid Child selected.";
-                }
+                ViewBag.ErrorMessage = "Please provide a valid description and points.";
+                return View();
             }
+            var child = _context.Children.Find(childId);
+            if (child == null || child.ParentId != userId)
+            {
+                ViewBag.ErrorMessage = "Invalid Child selected.";
+                return View();
+            }
+            var newTask = new WebApplication3.Models.Task { Description = description, Points = points, ChildId = childId, IsCompleted = false };
+            _context.Tasks.Add(newTask);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
 
-            // Repopulate children dropdown if there's an error
-            var children = _context.Children.Where(c => c.ParentId == userId).ToList();
-            ViewBag.Children = children;
-
-            return View(task);
+            // The following line was causing an error because 'task' is not defined. It's likely a leftover from a previous modification.
+            // I'm removing it as it's not needed after a successful task creation.
+            // return View(task); 
         }
 
         // Only the parent of the child who owns the task can edit it
@@ -143,6 +139,9 @@ namespace WebApplication3.Controllers
                 return RedirectToAction("Index"); // Or show an error message
             }
 
+            var children = _context.Children.Where(c => c.ParentId == userId).ToList();
+            ViewBag.Children = children;
+
             if (ModelState.IsValid)
             {
                 var task = _context.Tasks.Include(t => t.Child).FirstOrDefault(t => t.Id == updatedTask.Id);
@@ -156,11 +155,8 @@ namespace WebApplication3.Controllers
                     _context.SaveChanges();
                     return RedirectToAction("Index");
                 }
+                return NotFound();
             }
-
-            // Repopulate children dropdown if there's an error
-            var children = _context.Children.Where(c => c.ParentId == userId).ToList();
-            ViewBag.Children = children;
 
             return View(updatedTask);
         }
@@ -189,48 +185,47 @@ namespace WebApplication3.Controllers
         }
 
 
-        // Both parent and child can mark a task as complete
         public IActionResult MarkComplete(int id)
         {
-            var role = _httpContextAccessor.HttpContext.Session.GetString("Role");
-            var userId = _httpContextAccessor.HttpContext.Session.GetInt32("UserId");
-
-            var task = _context.Tasks.Include(t => t.Child).FirstOrDefault(t => t.Id == id);
+            var task = _context.Tasks.Include(t => t.Child).FirstOrDefault(t => t.Id == id); // Include Child
             if (task == null)
             {
                 return NotFound();
             }
 
-
-            if (role == "Parent")
+            var role = _httpContextAccessor.HttpContext.Session.GetString("Role");
+            if (role == "Child")
             {
-                // Check if the task belongs to a child of this parent
-                if (task.Child.ParentId == userId)
+                var userId = _httpContextAccessor.HttpContext.Session.GetInt32("UserId");
+                if (userId != task.ChildId)
                 {
-                    task.IsCompleted = !task.IsCompleted;
-                    _context.SaveChanges();
-                }
-            }
-            else if (role == "Child" && task.ChildId == userId)
-            {
-                // Child can only mark their own tasks as complete
-                task.IsCompleted = !task.IsCompleted;
-                _context.SaveChanges();
-
-                // Update child's points if task is completed
-                if (task.IsCompleted)
-                {
-                    var child = _context.Children.Find(userId);
-                    if (child != null)
-                    {
-                        child.Points += task.Points;
-                        _context.SaveChanges();
-                    }
+                    // The child is trying to mark complete a task that does not belong to them.
+                    // Redirect to the Index action or show an appropriate error message.
+                    return RedirectToAction("Index");
                 }
             }
 
 
-            return RedirectToAction("Index");
+            var child = task.Child; // Get the child associated with the task
+            if (child == null)
+            {
+                return NotFound(); // Or handle the case where the child is not found
+            }
+
+            task.IsCompleted = !task.IsCompleted; // Toggle the completion status
+
+            if (task.IsCompleted)
+            {
+                child.Points += task.Points; // Add points if task is now complete
+            }
+            else
+            {
+                child.Points -= task.Points; // Subtract points if task is now incomplete
+            }
+            _context.SaveChanges();
+
+
+            return RedirectToAction("Index", new { childId = task.ChildId });
         }
     }
 }

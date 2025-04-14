@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplication3.Data;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
 
 namespace WebApplication3.Controllers
 {

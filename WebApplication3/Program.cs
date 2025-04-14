@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApplication3.Data;
 using WebApplication3.Models;
-using Microsoft.AspNetCore.Authentication.Cookies; // Add this using  <---  Добавлено
-using Microsoft.AspNetCore.Authentication; // Add this using  <---  Добавлено
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

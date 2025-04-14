@@ -5,6 +5,8 @@
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
 
+
+
     <div>
         <label for="Description">Описание</label>
         <textarea id="Description" asp-for="Description" required></textarea>
@@ -18,9 +20,13 @@
     </div>
 
     <div>
-        <input type="checkbox" id="IsCompleted" asp-for="IsCompleted" />
-        @Html.LabelFor(m => m.IsCompleted, new { @class = "control-label" })
+        <label for="ChildId">Ребенок</label>
+        <select id="ChildId" asp-for="ChildId" asp-items="@(new SelectList(ViewBag.Children, "Id", "Name", Model.ChildId))" required>
+            <option value="">Выберите ребенка</option>
+        </select>
+        <span asp-validation-for="ChildId" class="text-danger"></span>
     </div>
+
 
     <button type="submit">Сохранить изменения</button>
 </form>

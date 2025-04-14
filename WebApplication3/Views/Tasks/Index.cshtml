@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
 	ViewData["Title"] = "Tasks";
 }
 
@@ -27,9 +26,12 @@
 			<th>
 				@Html.DisplayNameFor(model => model.IsCompleted)
 			</th>
-			<th>
-				Child Name
-			</th>
+			@if (ViewBag.UserRole == "Parent")
+			{
+				<th>
+					Child Name
+				</th>
+			}
 			<th></th>
 		</tr>
 	</thead>
@@ -47,11 +49,12 @@
 					@Html.DisplayFor(modelItem => item.IsCompleted)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Child.Name)
+					@if (ViewBag.UserRole == "Parent")
+					{
+						@Html.DisplayFor(modelItem => item.Child.Name)
+					}
 				</td>
 				<td>
-					<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-					<a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
 					@if (item.IsCompleted)
 					{
 						<a asp-action="MarkComplete" asp-route-id="@item.Id">Mark Incomplete</a>
@@ -59,6 +62,11 @@
 					else
 					{
 						<a asp-action="MarkComplete" asp-route-id="@item.Id">Mark Complete</a>
+					}
+					@if (ViewBag.UserRole == "Parent")
+					{
+						<a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+						<a asp-action = "Delete" asp-route-id="@item.Id">Delete</a>
 					}
 				</td>
 			</tr>

@@ -2,20 +2,21 @@
 
 <form asp-action="Create" method="post">
     <div>
-        <label for="Title">Название</label>
-        <input type="text" id="Title" name="Title" required>
-    </div>
-    <div>
         <label for="Description">Описание</label>
         <textarea id="Description" name="Description" required></textarea>
     </div>
     <div>
-        <label for="Deadline">Срок выполнения</label>
-        <input type="date" id="Deadline" name="Deadline" required>
+        <label for="Points">Награда (баллы)</label>
+        <input type="number" id="Points" name="Points" min="1" required>
     </div>
     <div>
-        <label for="Reward">Награда (баллы)</label>
-        <input type="number" id="Reward" name="Reward" min="1" required>
+        <label for="ChildId">Ребенок</label>
+        <select id="ChildId" name="ChildId" required>
+            @foreach (var child in ViewBag.Children)
+            {
+                <option value="@child.Id">@child.Name</option>
+            }
+        </select>
     </div>
     <button type="submit">Добавить</button>
 </form>

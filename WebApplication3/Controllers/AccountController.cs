@@ -2,11 +2,8 @@
 using WebApplication3.Models;
 using Microsoft.AspNetCore.Identity;
 using WebApplication3.Data;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication;  // Добавлен using
-using Microsoft.AspNetCore.Authentication.Cookies; // Добавлен using
-using System.Threading.Tasks; // Добавлен using
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace WebApplication3.Controllers
 {
@@ -118,5 +115,145 @@ namespace WebApplication3.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
+
+        // GET: /Account/Edit
+        public async Task<IActionResult> Edit()
+        {
+            string role = HttpContext.Session.GetString("Role");
+            int? userId = HttpContext.Session.GetInt32("UserId");
+
+            if (!userId.HasValue)
+            {
+                return RedirectToAction("Login");
+            }
+
+            EditProfileViewModel viewModel = new();
+
+            if (role == "Parent")
+            {
+                Parent? parent = await _context.Parents.FindAsync(userId.Value);
+                if (parent == null)
+                {
+                    return NotFound();
+                }
+
+                viewModel.Id = parent.Id;
+                viewModel.Name = parent.Name;
+                viewModel.Email = parent.Email;
+                viewModel.Role = "Parent";
+            }
+            else if (role == "Child")
+            {
+                Child? child = await _context.Children.FindAsync(userId.Value);
+                if (child == null)
+                {
+                    return NotFound();
+                }
+
+                viewModel.Id = child.Id;
+                viewModel.Name = child.Name;
+                viewModel.Email = child.Email;
+                viewModel.Role = "Child";
+                viewModel.Age = child.Age;
+            }
+
+            return View(viewModel);
+        }
+
+        // POST: /Account/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditProfileViewModel model)
+        {
+            var role = HttpContext.Session.GetString("Role");
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (!userId.HasValue)
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (role == "Parent")
+            {
+                var parent = await _context.Parents.FindAsync(userId.Value);
+                if (parent == null)
+                {
+                    return NotFound();
+                }
+
+                if (!string.IsNullOrEmpty(model.CurrentPassword) || !string.IsNullOrEmpty(model.NewPassword) || !string.IsNullOrEmpty(model.ConfirmPassword))
+                {
+                    // Attempting to change password
+                    var result = _parentHasher.VerifyHashedPassword(parent, parent.Password, model.CurrentPassword);
+                    if (result == PasswordVerificationResult.Success)
+                    {
+                        if (model.NewPassword == model.ConfirmPassword)
+                        {
+                            // Change the password
+                            parent.Password = _parentHasher.HashPassword(parent, model.NewPassword);
+                            _context.Update(parent); // Mark entity as modified
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("ConfirmPassword", "The new password and confirmation password do not match.");
+                            return View(model);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("CurrentPassword", "The current password entered is incorrect.");
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    // Not attempting to change password, just update name/email
+                    parent.Name = model.Name;
+                    parent.Email = model.Email;
+                    _context.Update(parent);
+                }
+            }
+            else if (role == "Child")
+            {
+                var child = await _context.Children.FindAsync(userId.Value);
+                if (child == null)
+                {
+                    return NotFound();
+                }
+
+                child.Name = model.Name;
+                // Do not update email for children
+
+                _context.Update(child);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        /* [HttpPost]
+         public IActionResult Edit(Parent parentModel) // Overload for Parent
+         {
+             var role = HttpContext.Session.GetString("Role");
+             var userId = HttpContext.Session.GetInt32("UserId");
+
+             if (userId == null || role != "Parent")
+             {
+                 return RedirectToAction("Login");
+             }
+
+             var parent = _context.Parents.Find(userId);
+             if (parent == null)
+             {
+                 return NotFound();
+             }
+
+             // Update properties, exclude password
+             parent.Name = parentModel.Name;
+             parent.Email = parentModel.Email;
+
+             _context.SaveChanges();
+             return RedirectToAction("Index", "Home"); // Or a profile page
+         }*/
     }
 }

@@ -1,9 +1,16 @@
-﻿
-<div class="text-center">
+﻿<div class="text-center">
     <h1 class="display-4">Welcome to the Task Manager!</h1>
+    <p><a href="@Url.Action("Edit", "Account")">Edit Profile</a></p>
+
     <p>
         <a asp-controller="Tasks" asp-action="Index">Go to Tasks</a>
     </p>
+
+    @if (ViewBag.UserRole == "Child")
+    {
+        <p><a asp-controller="Rewards" asp-action="ChildRewards">View My Rewards</a></p>
+    }
+
     @if (ViewBag.UserRole == "Parent")
     {
         <p><a asp-controller="Rewards" asp-action="ManageRewards">Manage Children's Rewards</a></p>
