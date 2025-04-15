@@ -129,7 +129,7 @@ namespace WebApplication3.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(WebApplication3.Models.Task updatedTask)
+        public async Task<IActionResult> Edit(int id, string description, int points, int childId)
         {
             var role = _httpContextAccessor.HttpContext.Session.GetString("Role");
             var userId = _httpContextAccessor.HttpContext.Session.GetInt32("UserId");
@@ -139,28 +139,45 @@ namespace WebApplication3.Controllers
                 return RedirectToAction("Index"); // Or show an error message
             }
 
-            var children = _context.Children.Where(c => c.ParentId == userId).ToList();
-            ViewBag.Children = children;
-
-            if (ModelState.IsValid)
+            if (string.IsNullOrEmpty(description))
             {
-                var task = _context.Tasks.Include(t => t.Child).FirstOrDefault(t => t.Id == updatedTask.Id);
-                if (task != null && task.Child.ParentId == userId)
-                {
-                    task.Description = updatedTask.Description;
-                    task.Points = updatedTask.Points;
-                    task.IsCompleted = updatedTask.IsCompleted;
-                    task.ChildId = updatedTask.ChildId; // Allow changing the child for the task
+                ViewBag.ErrorMessage = "Please provide a task description.";
+                ViewBag.Children = _context.Children.Where(c => c.ParentId == userId).ToList();
+                var task = await _context.Tasks.FindAsync(id);
+                return View(task);
+            }
 
-                    _context.SaveChanges();
-                    return RedirectToAction("Index");
-                }
+            if (points <= 0)
+            {
+                ViewBag.ErrorMessage = "Points must be greater than zero.";
+                ViewBag.Children = _context.Children.Where(c => c.ParentId == userId).ToList();
+                var task = await _context.Tasks.FindAsync(id);
+                return View(task);
+            }
+
+            var child = await _context.Children.FindAsync(childId);
+            if (child == null || child.ParentId != userId)
+            {
+                ViewBag.ErrorMessage = "Invalid child selected.";
+                ViewBag.Children = _context.Children.Where(c => c.ParentId == userId).ToList();
+                var task = await _context.Tasks.FindAsync(id);
+                return View(task);
+            }
+
+            var existingTask = await _context.Tasks.FindAsync(id);
+            if (existingTask == null)
+            {
                 return NotFound();
             }
 
-            return View(updatedTask);
-        }
+            existingTask.Description = description;
+            existingTask.Points = points;
+            existingTask.ChildId = childId;
 
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
 
         // Only the parent of the child who owns the task can delete it
         public IActionResult Delete(int id)
