@@ -1,33 +1,35 @@
 ﻿<div class="text-center">
-    <h1 class="display-4">Welcome to the Task Manager!</h1>
-    <p><a href="@Url.Action("Edit", "Account")">Edit Profile</a></p>
+    <h1 class="display-4">Добро пожаловать в менеджер задач!</h1>
+    <p>
+        <a href="@Url.Action("Edit", "Account")" class="btn btn-primary">Редактировать профиль</a>
+    </p>
 
     <p>
-        <a asp-controller="Tasks" asp-action="Index">Go to Tasks</a>
+        <a asp-controller="Tasks" asp-action="Index" class="btn btn-primary">Перейти к задачам</a>
     </p>
 
     @if (ViewBag.UserRole == "Child")
     {
-        <p><a asp-controller="Rewards" asp-action="ChildRewards">View My Rewards</a></p>
+        <p><a asp-controller="Rewards" asp-action="ChildRewards" class="btn btn-primary">Увидеть список наград</a></p>
     }
 
     @if (ViewBag.UserRole == "Parent")
     {
-        <p><a asp-controller="Rewards" asp-action="ManageRewards">Manage Children's Rewards</a></p>
+        <p><a asp-controller="Rewards" asp-action="ManageRewards" class="btn btn-primary">Настроить награды ребенка</a></p>
     }
 
     @using (Html.BeginForm("Logout", "Account", FormMethod.Post))
     {
-        <button type="submit" class="btn btn-link">Logout</button>
+        <button type="submit" class="btn btn-primary">Выйти</button>
     }
 
     @if (ViewBag.Children != null && ViewBag.Children.Count > 0)
     {
-        <h2>Your Children</h2>
+        <h2>Ваши дети</h2>
         <ul>
             @foreach (var child in ViewBag.Children)
             {
-                <li><a asp-controller="Tasks" asp-action="Index" asp-route-childId="@child.Id">@child.Name</a></li>
+                <li><a asp-controller="Tasks" asp-action="Index" asp-route-childId="@child.Id" class="btn btn-primary">@child.Name</a></li>
             }
         </ul>
     }
@@ -35,7 +37,7 @@
     {
         @if (ViewBag.UserRole == "Parent")
         {
-            <p>No children found.</p>
+            <p>У вас пока что нет детей.</p>
         }
     }
 </div>

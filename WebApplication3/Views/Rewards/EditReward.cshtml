@@ -1,48 +1,34 @@
-﻿@model WebApplication3.Models.Reward
+﻿@model WebApplication3.Models.Task
 
-@{
-    ViewData["Title"] = "Edit Reward";
-}
+<h2>Редактировать задачу</h2>
 
-<h1>@ViewData["Title"]</h1>
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
 
-<h4>Reward</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="EditReward" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" name="Id" value="@Model.Id" />
-            <div class="form-group">
-                <label class="control-label">Name</label>
-                <input name="name" class="form-control" value="@Model.Name" />
-                <span class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Points</label>
-                <input name="points" class="form-control" value="@Model.Points" />
-                <span class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Child</label>
-                <select name="childId" class="form-control" asp-items="@(new SelectList(ViewBag.Children, "Id", "Name", Model.ChildId))">
-                    <option value="">-- Select Child --</option>
-                </select>
-                <span asp-validation-for="ChildId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+
+
+    <div>
+        <label for="Description">Описание</label>
+        <textarea id="Description" asp-for="Description" required></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-action="ManageRewards">Back to List</a>
-</div>
+    <div>
+        <label for="Points">Награда (баллы)</label>
+        <input type="number" id="Points" asp-for="Points" min="1" required>
+        <span asp-validation-for="Points" class="text-danger"></span>
+    </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+    <div>
+        <label for="ChildId">Ребенок</label>
+        <select id="ChildId" asp-for="ChildId" asp-items="@(new SelectList(ViewBag.Children, "Id", "Name", Model.ChildId))" required>
+            <option value="">Выберите ребенка</option>
+        </select>
+        <span asp-validation-for="ChildId" class="text-danger"></span>
+    </div>
+
+
+    <button type="submit">Сохранить изменения</button>
+</form>
+
+<a href="/Tasks/Index">Вернуться к списку</a>

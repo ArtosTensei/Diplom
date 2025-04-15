@@ -1,20 +1,19 @@
 ﻿@model WebApplication3.Models.RegisterViewModel
 
-<h2>Register</h2>
+<h2>Регистрация</h2>
 
 @using (Html.BeginForm("Register", "Account", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>Create a new account.</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="form-group">
             @Html.LabelFor(m => m.Name, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control", style = "max-width: 300px;" } })
                 @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -22,7 +21,7 @@
         <div class="form-group">
             @Html.LabelFor(m => m.Email, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", style = "max-width: 300px;" } })
                 @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -30,7 +29,7 @@
         <div class="form-group">
             @Html.LabelFor(m => m.Password, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control", @type = "password", style = "max-width: 300px;" } })
                 @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -38,7 +37,7 @@
         <div class="form-group">
             @Html.LabelFor(m => m.Role, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(m => m.Role, new SelectList(new[] { "Parent", "Child" }), "Select Role", new { @class = "form-control" })
+                @Html.DropDownListFor(m => m.Role, new SelectList(new[] { "Родитель", "Ребенок" }), "Выберите роль", new { @class = "form-control", style = "max-width: 300px;" })
                 @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -47,7 +46,7 @@
             <div class="form-group">
                 @Html.LabelFor(m => m.Age, new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(m => m.Age, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(m => m.Age, new { htmlAttributes = new { @class = "form-control", style = "max-width: 300px;" } })
                     @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -55,7 +54,7 @@
             <div class="form-group">
                 @Html.LabelFor(m => m.ParentEmail, new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(m => m.ParentEmail, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(m => m.ParentEmail, new { htmlAttributes = new { @class = "form-control", style = "max-width: 300px;" } })
                     @Html.ValidationMessageFor(m => m.ParentEmail, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -63,18 +62,17 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Register" class="btn btn-default" />
+                <input type="submit" value="Зарегистрироваться" class="btn btn-primary" />
             </div>
         </div>
     </div>
 }
 
 @section Scripts {
-@* Assuming you have jQuery included in your layout *@
     <script>
         $(document).ready(function () {
             $('#Role').change(function () {
-                if ($(this).val() === "Child") {
+                if ($(this).val() === "Ребенок") {
                     $('#child-fields').show();
                 } else {
                     $('#child-fields').hide();

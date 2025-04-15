@@ -1,23 +1,23 @@
-﻿<h2>Добавить новую задачу</h2>
+﻿﻿<h2>Добавить новую задачу</h2>
 
 <form asp-action="Create" method="post">
     <div>
         <label for="Description">Описание</label>
-        <textarea id="Description" name="Description" required></textarea>
+        <textarea id="Description" name="Description" required class="form-control" style="max-width: 300px;"></textarea>
     </div>
     <div>
         <label for="Points">Награда (баллы)</label>
-        <input type="number" id="Points" name="Points" min="1" required>
+        <input type="number" id="Points" name="Points" min="1" required class="form-control" style="max-width: 300px;">
     </div>
     <div>
         <label for="ChildId">Ребенок</label>
         <select id="ChildId" name="ChildId" required>
             @foreach (var child in ViewBag.Children)
             {
-                <option value="@child.Id">@child.Name</option>
+                <option value="@child.Id" style="max-width: 300px;">@child.Name</option>
             }
         </select>
     </div>
-    <button type="submit">Добавить</button>
+    <button type="submit" class="btn btn-primary">Добавить</button>
 </form>
-<a href="/Tasks/Index">Вернуться к списку</a>
+<a href="/Tasks/Index" class="btn btn-secondary">Вернуться к списку</a>

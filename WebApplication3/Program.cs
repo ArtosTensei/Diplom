@@ -18,16 +18,14 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Add authentication and cookie authentication handler  <--- Вставка конфигурации аутентификации
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login"; // Specify the login path
+        options.LoginPath = "/Account/Login";
     });
 
 var app = builder.Build();
 
-// Middleware для сессий должен применяться всегда.
 app.UseSession();
 
 if (!app.Environment.IsDevelopment())
@@ -40,7 +38,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// Add authentication middleware BEFORE authorization  <--- Вставка middleware аутентификации
 app.UseAuthentication();
 
 app.UseAuthorization();

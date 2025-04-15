@@ -1,5 +1,5 @@
-﻿@{
-	ViewData["Title"] = "Tasks";
+﻿﻿@{
+	ViewData["Title"] = "Задачи";
 }
 
  @model IEnumerable<WebApplication3.Models.Task>
@@ -9,7 +9,7 @@
 @if (ViewBag.UserRole != "Child")
 {
 	<p>
-		<a asp-action="Create">Create New</a>
+		<a asp-action="Create" class="btn btn-primary">Создать новую задачу</a>
 	</p>
 }
 
@@ -17,19 +17,18 @@
 	<thead>
 		<tr>
 			<th>
-				@Html.DisplayNameFor(model => model.Description)
+				Описание
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Points)
-				+
+				Очки
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.IsCompleted)
+				Выполнено?
 			</th>
 			@if (ViewBag.UserRole == "Parent")
 			{
 				<th>
-					Child Name
+					Имя ребенка
 				</th>
 			}
 			<th></th>
@@ -57,20 +56,19 @@
 				<td>
 					@if (item.IsCompleted)
 					{
-						<a asp-action="MarkComplete" asp-route-id="@item.Id">Mark Incomplete</a>
+						<a asp-action="MarkComplete" asp-route-id="@item.Id" class="btn btn-primary">Не выполнено</a>
 					}
 					else
 					{
-						<a asp-action="MarkComplete" asp-route-id="@item.Id">Mark Complete</a>
+						<a asp-action="MarkComplete" asp-route-id="@item.Id" class="btn btn-primary">Выполнено</a>
 					}
 					@if (ViewBag.UserRole == "Parent")
 					{
-						<a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-						<a asp-action = "Delete" asp-route-id="@item.Id">Delete</a>
+						<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Редактировать</a>
+						<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-primary">Удалить</a>
 					}
 				</td>
 			</tr>
 		}
 	</tbody>
 </table>
-

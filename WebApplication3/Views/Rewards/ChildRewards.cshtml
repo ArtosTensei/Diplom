@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<WebApplication3.Models.Reward>
 
 @{
-    ViewData["Title"] = "My Rewards";
+    ViewData["Title"] = "Доступные награды";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -13,9 +13,7 @@
     </div>
 }
 
-<h2>My Points: @ViewBag.ChildPoints</h2>
-
-<h3>Available Rewards</h3>
+<h2>Мои очки: @ViewBag.ChildPoints</h2>
 
 <div class="row">
     @foreach (var reward in Model)
@@ -24,10 +22,10 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">@reward.Name</h5>
-                    <p class="card-text">Cost: @reward.Points points</p>
+                    <p class="card-text">Цена: @reward.Points</p>
                     <form asp-action="BuyReward" method="post">
                         <input type="hidden" name="rewardId" value="@reward.Id" />
-                        <button type="submit" class="btn btn-primary" disabled="@(ViewBag.ChildPoints < reward.Points)">Buy</button>
+                        <button type="submit" class="btn btn-primary" disabled="@(ViewBag.ChildPoints < reward.Points)">Купить награду</button>
                     </form>
                 </div>
             </div>

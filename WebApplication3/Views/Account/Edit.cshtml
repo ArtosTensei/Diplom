@@ -1,59 +1,88 @@
 ﻿@model WebApplication3.Models.EditProfileViewModel
 
-<h2>Edit Profile</h2>
+<h2>Изменить профиль</h2>
 
 @using (Html.BeginForm("Edit", "Account", FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Id)
     @Html.HiddenFor(m => m.Role)
-    // To track the user's role
 
-    <div>
-        @Html.LabelFor(m => m.Name)
-        @Html.TextBoxFor(m => m.Name)
-        @Html.ValidationMessageFor(m => m.Name)
+    <div class="row">
+        <div class="col-md-4">
+            @Html.LabelFor(m => m.Name, "Имя")
+        </div>
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", style = "max-width: 300px;" })
+            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+        </div>
     </div>
 
     @if (Model.Role != "Child")
     {
-        <div>
-            @Html.LabelFor(m => m.Email)
-            @Html.TextBoxFor(m => m.Email)
-            @Html.ValidationMessageFor(m => m.Email)
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.Email)
+            </div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", style = "max-width: 300px;" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
         </div>
     }
     else
     {
-        <div>
-            @Html.LabelFor(m => m.Email, "Email (cannot be changed)")
-            @Html.DisplayFor(m => m.Email)
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.Email, "Почту родителя изменить нельзя")
+            </div>
+            <div class="col-md-8">
+                @Html.DisplayFor(m => m.Email)
+            </div>
         </div>
-        <div>
-            @Html.LabelFor(m => m.Age)
-            @Html.DisplayFor(m => m.Age)
-        </div>
-    }
-
-    @if (Model.Role != "Child")
-    {
-        <h3>Change Password</h3>
-        <div>
-            @Html.LabelFor(m => m.CurrentPassword)
-            @Html.PasswordFor(m => m.CurrentPassword)
-            @Html.ValidationMessageFor(m => m.CurrentPassword)
-        </div>
-
-        <div>
-            @Html.LabelFor(m => m.NewPassword)
-            @Html.PasswordFor(m => m.NewPassword)
-            @Html.ValidationMessageFor(m => m.NewPassword)
-        </div>
-
-        <div>
-            @Html.LabelFor(m => m.ConfirmPassword)
-            @Html.PasswordFor(m => m.ConfirmPassword)
-            @Html.ValidationMessageFor(m => m.ConfirmPassword)
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.Age, "Возраст")
+            </div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.Age, new { @class = "form-control", style = "max-width: 300px;" })
+                @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })
+            </div>
         </div>
     }
-    <button type="submit">Save Changes</button>
+
+        <h3>Сменить пароль</h3>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.CurrentPassword, "Текущий пароль")
+            </div>
+            <div class="col-md-8">
+            @Html.PasswordFor(m => m.CurrentPassword, new { @class = "form-control", style = "max-width: 300px;" })
+                @Html.ValidationMessageFor(m => m.CurrentPassword, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.NewPassword,"Новый пароль")
+            </div>
+            <div class="col-md-8">
+            @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control", style = "max-width: 300px;" })
+                @Html.ValidationMessageFor(m => m.NewPassword, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.ConfirmPassword, "Подтверждение пароля")
+            </div>
+            <div class="col-md-8">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", style = "max-width: 300px;" })
+                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-4">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        </div>
+    </div>
 }
